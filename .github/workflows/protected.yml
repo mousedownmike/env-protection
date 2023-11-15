@@ -1,0 +1,10 @@
+name: Protected Environment Experiment
+on: [push]
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: env-0
+    steps:
+      - name: Print Protection Passed
+        run: echo "Protection Passed"
+
