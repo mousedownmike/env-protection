@@ -1,0 +1,7 @@
+{
+  "name": "env-protection",
+  "version": "0.0.0",
+  "description": "Environment protection webhook.",
+  "main": "index.js",
+  "author": "Mike Dalrymple"
+}
