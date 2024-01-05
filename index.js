@@ -1,3 +1,10 @@
+import {App} from "octokit";
+
+const app = new App({
+  appId: process.env.GH_APP_ID,
+  privateKey: process.env.GH_PRIVATE_KEY,
+})
+
 exports.handler = async (event) => {
 
   const method = event.requestContext.http.method;
