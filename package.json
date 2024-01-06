@@ -3,5 +3,8 @@
   "version": "0.0.0",
   "description": "Environment protection webhook.",
   "main": "index.js",
-  "author": "Mike Dalrymple"
+  "author": "Mike Dalrymple",
+  "dependencies": {
+    "octokit": "^3.1.1"
+  }
 }
