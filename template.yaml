@@ -7,7 +7,15 @@ Transform:
 Resources:
   ProtectionWebHook:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: [ "index.ts" ]
     Properties:
+      CodeUri: ./
       Handler: index.handler
       Runtime: nodejs20.x
       Architectures:
@@ -21,12 +29,5 @@ Resources:
       FunctionUrlConfig:
         AuthType: NONE
         Cors:
-          AllowOrigins:
-            - '*'
-          AllowMethods:
-            - GET
-            - POST
-            - PUT
-            - DELETE
-            - PATCH
-            - HEAD
+          AllowOrigins: [ '*' ]
+          AllowMethods: [ GET, POST, PUT, DELETE, PATCH, HEAD ]
