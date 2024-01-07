@@ -25,7 +25,18 @@ Resources:
       Description: Simple webhook implementation.
       Policies:
         - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource:
+                - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/github/envprotection/private_key'
       AutoPublishAlias: live
+      Environment:
+        Variables:
+          GH_APP_ID: '{{resolve:ssm:/github/envprotection/app_id}}'
+          GH_PRIVATE_KEY: '/github/envprotection/private_key'
       FunctionUrlConfig:
         AuthType: NONE
         Cors:

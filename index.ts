@@ -1,5 +1,6 @@
 import { App } from "octokit";
 import { Context } from "aws-lambda";
+import {GetParameterCommand, SSMClient} from '@aws-sdk/client-ssm';
 
 interface Payload {
     repository?: {
@@ -15,10 +16,23 @@ interface Payload {
     };
 }
 
+async function getPrivateKeyFromSSM(ssmParameterName: string): Promise<string> {
+    const ssmClient = new SSMClient({});
+    const getParamCommand = new GetParameterCommand({
+        Name: ssmParameterName,
+        WithDecryption: true
+    });
+
+    const response = await ssmClient.send(getParamCommand);
+    return response.Parameter?.Value ?? '';
+}
+
 export async function handler(event: any, context: Context): Promise<any> {
+    const privateKey = await getPrivateKeyFromSSM(process.env.GH_PRIVATE_KEY!);
+
     const app = new App({
         appId: process.env.GH_APP_ID!,
-        privateKey: process.env.GH_PRIVATE_KEY!,
+        privateKey: privateKey,
     });
 
     // Assuming event is the JSON payload sent to the Lambda Function URL
