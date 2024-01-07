@@ -5,28 +5,98 @@ Transform:
   - AWS::Serverless-2016-10-31
 
 Resources:
+  ProtectionMessages:
+    Type: AWS::SNS::Topic
+  LambdaSharedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ lambda.amazonaws.com ]
+            Action: [ sts:AssumeRole ]
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: LambdaSSMParameterAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource:
+                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/github/envprotection/private_key'
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref ProtectionMessages
+  ProtectionUpdater:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: [ "index.ts" ]
+    Properties:
+      CodeUri: ./
+      Handler: index.update
+      Runtime: nodejs20.x
+      Architectures:
+        - arm64
+      MemorySize: 128
+      Timeout: 100
+      Description: Update workflows waiting for protection results.
+      Role: !GetAtt LambdaSharedRole.Arn
+      AutoPublishAlias: live
+      Environment:
+        Variables:
+          GH_APP_ID: '{{resolve:ssm:/github/envprotection/app_id}}'
+          GH_PRIVATE_KEY: '/github/envprotection/private_key'
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowOrigins: [ '*' ]
+          AllowMethods: [ GET, HEAD ]
   ProtectionWebHook:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints: [ "index.ts" ]
     Properties:
-      Handler: index.handler
+      CodeUri: ./
+      Handler: index.webhook
       Runtime: nodejs20.x
       Architectures:
         - arm64
       MemorySize: 128
       Timeout: 100
       Description: Simple webhook implementation.
-      Policies:
-        - AWSLambdaBasicExecutionRole
+      Role: !GetAtt LambdaSharedRole.Arn
       AutoPublishAlias: live
+      Environment:
+        Variables:
+          GH_APP_ID: '{{resolve:ssm:/github/envprotection/app_id}}'
+          GH_PRIVATE_KEY: '/github/envprotection/private_key'
+          SNS_TOPIC_ARN: !Ref ProtectionMessages
+          UPDATER_FUNCTION_URL: !GetAtt ProtectionUpdaterUrl.FunctionUrl
       FunctionUrlConfig:
         AuthType: NONE
         Cors:
-          AllowOrigins:
-            - '*'
-          AllowMethods:
-            - GET
-            - POST
-            - PUT
-            - DELETE
-            - PATCH
-            - HEAD
+          AllowOrigins: [ '*' ]
+          AllowMethods: [ GET, POST, PUT, DELETE, PATCH, HEAD ]
+Outputs:
+  ProtectionWebHookUrl:
+    Description: ProtectionWebHook Lambda Function URL
+    Value: !GetAtt ProtectionWebHookUrl.FunctionUrl
+  ProtectionUpdaterUrl:
+    Description: ProtectionUpdater Lambda Function URL
+    Value: !GetAtt ProtectionUpdaterUrl.FunctionUrl
