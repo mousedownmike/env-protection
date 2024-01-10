@@ -4,6 +4,9 @@
   "description": "Environment protection webhook.",
   "main": "dist/index.js",
   "author": "Mike Dalrymple",
+  "scripts": {
+    "build": "ncc build index.ts -o dist"
+  },
   "dependencies": {
     "@aws-sdk/client-sns": "^3.485.0",
     "@aws-sdk/client-ssm": "^3.485.0",
