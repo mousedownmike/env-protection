@@ -24,7 +24,7 @@ jobs:
           - { region: 'us-west-2', az: 'usw2-az2' }
           - { region: 'eu-west-1', az: 'euw1-az1' }
           - { region: 'eu-west-1', az: 'euw1-az2' }
-    uses: .github/workflows/matrix_target.yml@main
+    uses: ./.github/workflows/matrix_target.yml@main
     with:
       runner: 'ubuntu-22.04'
       environment: PROD monitoring
