@@ -60,9 +60,9 @@ export async function webhook(event: any, context: Context): Promise<any> {
     environment: ${deployment.environment}
     repository: ${repository.name}
     
-    STATUS:  ${process.env.UPDATER_FUNCTION_URL}status/${updatePath}?id=${installation.id}&env=${deployment.environment}&message=Status+message
-    APPROVE: ${process.env.UPDATER_FUNCTION_URL}approve/${updatePath}?id=${installation.id}&env=${deployment.environment}&message=APPROVED
-    REJECT:  ${process.env.UPDATER_FUNCTION_URL}reject/${updatePath}?id=${installation.id}&env=${deployment.environment}&message=REJECTED
+    STATUS:  ${process.env.UPDATER_FUNCTION_URL}status/${updatePath}?id=${installation.id}&env=${encodeURIComponent(deployment.environment)}&message=Status+message
+    APPROVE: ${process.env.UPDATER_FUNCTION_URL}approve/${updatePath}?id=${installation.id}&env=${encodeURIComponent(deployment.environment)}&message=APPROVED
+    REJECT:  ${process.env.UPDATER_FUNCTION_URL}reject/${updatePath}?id=${installation.id}&env=${encodeURIComponent(deployment.environment)}&message=REJECTED
     `);
     //
     // try {
