@@ -1,0 +1,26 @@
+name: Target Rollout
+on:
+  workflow_call:
+    inputs:
+      runner:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+      region:
+        required: true
+        type: string
+      az:
+        required: true
+        type: string
+jobs:
+  rollout:
+    runs-on: ${{ inputs.runner }}
+    env:
+      REGION: ${{ inputs.region }}
+      AZ: ${{ inputs.az }}
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Doing Stuff
+        run: echo "Doing Stuff for $REGION $AZ"
