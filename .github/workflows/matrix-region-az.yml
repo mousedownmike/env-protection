@@ -11,7 +11,7 @@ jobs:
       - name: Print Approval
         run: echo "Deployment Approved"
   region-az-rollout:
-    name: Region AZ Rollout
+    name: AZ
     needs: initial-approval
     strategy:
       fail-fast: true
