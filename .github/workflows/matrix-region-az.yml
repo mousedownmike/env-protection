@@ -27,7 +27,8 @@ jobs:
     uses: ./.github/workflows/matrix-target.yml
     with:
       runner: 'ubuntu-22.04'
-      environment: PROD ${{ matrix.target.region }} ${{ matrix.target.az }}
+#      environment: PROD ${{ matrix.target.region }} ${{ matrix.target.az }}
+      environment: env-0
       region: ${{ matrix.target.region }}
       az: ${{ matrix.target.az }}
 
