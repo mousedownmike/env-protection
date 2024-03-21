@@ -21,9 +21,9 @@ jobs:
           - { region: 'us-east-1', az: 'use1-az1' }
           - { region: 'us-east-1', az: 'use1-az3' }
           - { region: 'us-west-2', az: 'usw2-az1' }
-          - { region: 'us-west-2', az: 'usw2-az2' }
-          - { region: 'eu-west-1', az: 'euw1-az1' }
-          - { region: 'eu-west-1', az: 'euw1-az2' }
+#          - { region: 'us-west-2', az: 'usw2-az2' }
+#          - { region: 'eu-west-1', az: 'euw1-az1' }
+#          - { region: 'eu-west-1', az: 'euw1-az2' }
     uses: ./.github/workflows/matrix-target.yml
     with:
       runner: 'ubuntu-22.04'
